@@ -8,14 +8,14 @@
 <body>
     <div id="fondo"></div>
 
-    <div id="añadir">+</div>
+    <button id="añadir">+</button>
 
     <div id="edicion" style="display: none;">
         <h3>Post-it</h3>
-        <input id="texto-postit" type="text" placeholder="Escribe tu nota aqui..."></textarea>
+        <input id="texto-postit" type="text" placeholder="Escribe tu nota aqui...">
         <div>
             <label>Color:</label>
-            <input type="color" id="color-postit" value="#fef08a">
+            <input type="color" id="color-postit">
         </div>
         <button id="btn-guardar">Guardar</button>
         <button id="btn-cancelar">Cancelar</button>
@@ -45,6 +45,55 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        //Recojo todos los id en variables
+        const fondo = document.getElementById("fondo");
+        const btnAñadir = document.getElementById("añadir");
+        const edicion = document.getElementById("edicion");
+        const textoPostit = document.getElementById("texto-postit");
+        const colorPostit = document.getElementById("color-postit");
+        const btnGuardar = document.getElementById("btn-guardar");
+        const btnCancelar = document.getElementById("btn-cancelar"); 
+
+        //Evento para el boton de creación
+        btnAñadir.addEventListener("click", () => {
+            textoPostit.value = "";  
+            colorPostit.value = "#fef08a";
+            edicion.style.display = "block";
+        });
+
+        //Evento para ocultar el post it al pulsar cancelar
+        btnCancelar.addEventListener("click", () => {
+            edicion.style.display = "none";
+        });
+
+        //Evento para guardar la nota dentro de firebase
+        async function guardarPostIt(e) {
+            const texto = textoPostit.value.trim();
+            const color = colorPostit.value;
+
+            let info = await getDocs(collection(db, "Tablero"));
+            const totalNotas = info.size;
+            const nuevoId = totalNotas + 1;
+
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            await addDoc(collection(db, "Tablero"), {
+                id: nuevoId,
+                texto: texto,
+                color: color,
+                coordenadaX: posX,
+                coordenadaY: posY,
+                fechaCreacion: new Date()
+            });
+            edicion.style.display = "none";
+        };
+
+        btnGuardar.addEventListener("click", guardarPostIt);
+
+
+
     </script>
 </body>
 </html>
