@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra de Post-its interactivos</title>
+</head>
+<body>
+    <div id="fondo"></div>
+
+    <div id="añadir">+</div>
+
+    <div id="edicion" style="display: none;">
+        <h3>Post-it</h3>
+        <input id="texto-postit" type="text" placeholder="Escribe tu nota aqui..."></textarea>
+        <div>
+            <label>Color:</label>
+            <input type="color" id="color-postit" value="#fef08a">
+        </div>
+        <button id="btn-guardar">Guardar</button>
+        <button id="btn-cancelar">Cancelar</button>
+    </div>
+
+
+
+
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore,getDoc, deleteDoc, doc, collection, addDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+        apiKey: "AIzaSyCKNSLFrjUspMKzE7pbVGaYxGGYJ9WUAdo",
+        authDomain: "ejercicios-firestore-6ab63.firebaseapp.com",
+        projectId: "ejercicios-firestore-6ab63",
+        storageBucket: "ejercicios-firestore-6ab63.firebasestorage.app",
+        messagingSenderId: "718827856706",
+        appId: "1:718827856706:web:e8fc3c95ce2ccae5ca9edb",
+        measurementId: "G-F964LT31QN"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    </script>
+</body>
+</html>
