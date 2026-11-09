@@ -63,21 +63,32 @@
             const texto = textoPostit.value.trim();
             const color = colorPostit.value;
 
-            let info = await getDocs(collection(db, "Tablero"));
-            const totalNotas = info.size;
-            const nuevoId = totalNotas + 1;
+            if (idActualizar) {
+                await updateDoc(doc(db, "Tablero", idActualizar), {
+                    texto: texto,
+                    color: color
+                });
+                idActualizar = null;
+            }
 
-            const posX = e.clientX;
-            const posY = e.clientY;
+            else{
+                let info = await getDocs(collection(db, "Tablero"));
+                const totalNotas = info.size;
+                const nuevoId = totalNotas + 1;
 
-            await addDoc(collection(db, "Tablero"), {
-                id: nuevoId,
-                texto: texto,
-                color: color,
-                coordenadaX: posX,
-                coordenadaY: posY,
-                fechaCreacion: new Date()
-            });
+                const posX = 100;
+                const posY = 100;
+
+                await addDoc(collection(db, "Tablero"), {
+                    id: nuevoId,
+                    texto: texto,
+                    color: color,
+                    coordenadaX: posX,
+                    coordenadaY: posY,
+                    fechaCreacion: new Date()
+                });
+            }
+            
             edicion.style.display = "none";
 
             leerNotas();
@@ -95,14 +106,80 @@
                 let documento = doc.data();
 
                 fondo.innerHTML += `
-                    <div class="postit" style="left: ${documento.coordenadaX}px; top: ${documento.coordenadaY}px; background-color: ${documento.color};">
-                        <p>${documento.texto}</p>
+                    <div class="postit" 
+                        id="postit-${doc.id}"
+                        ontouchstart="moverNota(event, this, '${doc.id}')"
+                        ondblclick="editarNota('${doc.id}')"
+                        style="left: ${documento.coordenadaX}px; top: ${documento.coordenadaY}px; background-color: ${documento.color};">
+                            <p>${documento.texto}</p>
                     </div>
                 `;
             }
         }
 
         leerNotas();
+
+        window.moverNota = function (e, elemento, idDoc) {
+            let touch = e.touches[0];
+            let rect = elemento.getBoundingClientRect();
+            
+            let offsetX = touch.clientX - rect.left;
+            let offsetY = touch.clientY - rect.top;
+
+            //ESTO ES PARA EL DESLIZAMIENTO
+            let inicioX = touch.clientX;
+            let desplazamientoHorizontal = 0;
+
+            function mover(e) {
+                e.preventDefault();
+                let toqueActual = e.touches[0];
+
+                desplazamientoHorizontal = toqueActual.clientX - inicioX;
+
+                elemento.style.left = (toqueActual.clientX - offsetX) + "px";
+                elemento.style.top = (toqueActual.clientY - offsetY) + "px";
+            }
+
+            async function finalizar() {
+                document.removeEventListener("touchmove", mover);
+                document.removeEventListener("touchend", finalizar);
+
+                if (Math.abs(desplazamientoHorizontal) > 100) {
+                    window.borrarNota(idDoc, elemento);
+                } else {
+                    await updateDoc(doc(db, "Tablero", idDoc), {
+                        coordenadaX: parseInt(elemento.style.left),
+                        coordenadaY: parseInt(elemento.style.top)
+                    });
+                }
+            }
+
+    document.addEventListener("touchmove", mover, { passive: false });
+    document.addEventListener("touchend", finalizar);
+};
+        
+        let idActualizar = null;
+        window.editarNota = async function (idDoc) {
+            idActualizar = idDoc;
+
+            let miDoc = await getDoc(doc(db, "Tablero", idDoc));
+            let datosNota = miDoc.data();
+
+            textoPostit.value = datosNota.texto;
+            colorPostit.value = datosNota.color;
+            edicion.style.display = "block";
+        };
+
+        window.borrarNota = async function (idDoc, elemento) {
+            const aceptar = confirm("¿Estás seguro de que quieres eliminar este post-it?");
+
+            if (aceptar) {
+                await deleteDoc(doc(db, "Tablero", idDoc));
+                leerNotas();
+            } else {
+                elemento.style.transform = "translateX(0px)";
+            }
+        };
     </script>
 </body>
 </html>

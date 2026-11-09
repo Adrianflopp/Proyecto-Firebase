@@ -50,5 +50,7 @@ body {
     border-radius: 8px;
     box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
     min-width: 120px;
-    box-sizing: border-box;
+    user-select: none;
+    
+    transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
 }
