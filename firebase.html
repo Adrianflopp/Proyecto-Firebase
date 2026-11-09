@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <h1 id="titulo-pizarra">Pizarra de Post-its</h1>
     <div id="fondo"></div>
 
     <button id="añadir">+</button>
@@ -154,9 +155,9 @@
                 }
             }
 
-    document.addEventListener("touchmove", mover, { passive: false });
-    document.addEventListener("touchend", finalizar);
-};
+            document.addEventListener("touchmove", mover, { passive: false });
+            document.addEventListener("touchend", finalizar);
+        };
         
         let idActualizar = null;
         window.editarNota = async function (idDoc) {
