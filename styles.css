@@ -8,7 +8,160 @@
 html, body {
     width: 100%;
     height: 100%;
+    background-color: #ffffff;
+    color: #101010;
+}
+
+#login {
+    width: 100%;
+    min-height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+#login > * {
+    width: 100%;
+    max-width: 440px;
+}
+
+.cabecera { order: 1; margin-bottom: 24px; }
+.login-form { order: 2; }
+.dividir { order: 3; }
+.btn-google { order: 4; }
+
+.cabecera h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #101010;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.cabecera p {
+    font-size: 14px;
+    color: #555555;
+}
+
+/* Formulario e Inputs */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input label {
+    font-size: 15px;
+    font-weight: 400;
+    color: #101010;
+}
+
+.password-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.olvidada {
+    font-size: 13px;
+    color: #3643BA;
+    text-decoration: none;
+}
+
+.olvidada:hover {
+    text-decoration: underline;
+}
+
+.input input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    font-size: 15px;
+    color: #101010;
+    border: 1px solid #949494;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input input::placeholder {
+    color: #767676;
+}
+
+.input input:focus {
+    border: 2px solid #3643BA;
+}
+
+
+.btn-submit {
+    width: 100%;
+    height: 48px;
+    background-color: #3643BA;
+    color: #ffffff;
+    border: none;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #273294;
+}
+
+.dividir {
+    margin: 20px 0 14px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #666666;
+}
+
+.btn-google {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    background-color: #ffffff;
+    border: 1px solid #949494;
+    border-radius: 2px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #101010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-google:hover {
+    background-color: #f7f7f7;
+}
+
+.google-icon {
+    position: absolute;
+    left: 16px;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+#pizarra {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    position: relative;
     background-color: #bc8a5f;
     background-image: 
         radial-gradient(rgba(0, 0, 0, 0.15) 15%, transparent 16%),
@@ -22,7 +175,6 @@ html, body {
     height: 100%;
     position: relative;
 }
-
 
 #titulo-pizarra {
     position: absolute;
