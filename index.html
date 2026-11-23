@@ -82,6 +82,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
+        var user;
 
         
 
@@ -123,7 +124,7 @@
             const color = colorPostit.value;
 
             if (idActualizar) {
-                await updateDoc(doc(db, "Tablero", idActualizar), {
+                await updateDoc(doc(db, "Tablero"+user.uid, idActualizar), {
                     texto: texto,
                     color: color
                 });
@@ -131,14 +132,14 @@
             }
 
             else{
-                let info = await getDocs(collection(db, "Tablero"));
+                let info = await getDocs(collection(db, "Tablero"+user.uid));
                 const totalNotas = info.size;
                 const nuevoId = totalNotas + 1;
 
                 const posX = 100;
                 const posY = 100;
 
-                await addDoc(collection(db, "Tablero"), {
+                await addDoc(collection(db, "Tablero"+user.uid), {
                     id: nuevoId,
                     texto: texto,
                     color: color,
@@ -156,7 +157,7 @@
         btnGuardar.addEventListener("click", guardarPostIt);
 
         async function leerNotas() {
-            const misDatos = await getDocs(collection(db, "Tablero"));
+            const misDatos = await getDocs(collection(db, "Tablero"+user.uid));
             let listaDatos = misDatos.docs;
 
             fondo.innerHTML = "";
@@ -175,8 +176,6 @@
                 `;
             }
         }
-
-        leerNotas();
 
         window.moverNota = function (e, elemento, idDoc) {
             let touch = e.touches[0];
@@ -206,7 +205,7 @@
                 if (Math.abs(desplazamientoHorizontal) > 100) {
                     window.borrarNota(idDoc, elemento);
                 } else {
-                    await updateDoc(doc(db, "Tablero", idDoc), {
+                    await updateDoc(doc(db, "Tablero"+user.uid, idDoc), {
                         coordenadaX: parseInt(elemento.style.left),
                         coordenadaY: parseInt(elemento.style.top)
                     });
@@ -221,7 +220,7 @@
         window.editarNota = async function (idDoc) {
             idActualizar = idDoc;
 
-            let miDoc = await getDoc(doc(db, "Tablero", idDoc));
+            let miDoc = await getDoc(doc(db, "Tablero"+user.uid, idDoc));
             let datosNota = miDoc.data();
 
             textoPostit.value = datosNota.texto;
@@ -233,7 +232,7 @@
             const aceptar = confirm("¿Estás seguro de que quieres eliminar este post-it?");
 
             if (aceptar) {
-                await deleteDoc(doc(db, "Tablero", idDoc));
+                await deleteDoc(doc(db, "Tablero"+user.uid, idDoc));
                 leerNotas();
             } else {
                 elemento.style.transform = "translateX(0px)";
@@ -245,9 +244,10 @@
                 createUserWithEmailAndPassword(auth, email.value.trim(), password.value)
                 .then((userCredential) => {
                     // Signed up 
-                    const user = userCredential.user;
+                    user = userCredential.user;
                     login.style.display = "none";
                     pizarra.style.display = "block";
+                    leerNotas();
                 })
                 .catch((error) => {
                     console.log(error.code, error.message);
@@ -260,9 +260,10 @@
                 signInWithEmailAndPassword(auth, email.value.trim(), password.value)
                 .then((userCredential) => {
                     // Signed in 
-                    const user = userCredential.user;
+                    user = userCredential.user;
                     login.style.display = "none";
                     pizarra.style.display = "block";
+                    leerNotas();
                 })
                 .catch((error) => {
                     console.log(error.code, error.message);
@@ -278,10 +279,11 @@
                     const credential = GoogleAuthProvider.credentialFromResult(result);
                     const token = credential.accessToken;
                     // The signed-in user info.
-                    const user = result.user;
+                    user = result.user;
                     // IdP data available using getAdditionalUserInfo(result)
                     login.style.display = "none";
                     pizarra.style.display = "block";
+                    leerNotas();
                     // ...
                 }).catch((error) => {
                     // Handle Errors here.
